@@ -1,14 +1,10 @@
 using EduTech;
-using Microsoft.EntityFrameworkCore;
-using EduTech.Models;
 using EduTech.DbInitializer;
-using Azure.Communication.Email;
+using EduTech.Models;
 using EduTech.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http;
-
-
+using Microsoft.EntityFrameworkCore;
+using Syncfusion.Licensing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,36 +14,43 @@ builder.Services.AddDbContext<EduTechDbContext>(options =>
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 //Register Syncfusion license
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBPh8sVXJ8S0d+X1JPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSHxSckdjXXtbcnRSRWA=");
+SyncfusionLicenseProvider.RegisterLicense(
+    "Mgo+DSMBPh8sVXJ8S0d+X1JPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSHxSckdjXXtbcnRSRWA=");
 
 
-// Add Azure Email service configuration
-builder.Services.AddSingleton(_ =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("EmailConnectionString");
-    if (string.IsNullOrEmpty(connectionString))
-    {
-        throw new InvalidOperationException("Email connection string is not configured");
-    }
-    return new EmailClient(connectionString);
-});
+// Add mail services to the container.
+
+builder.Services.AddOptions();
+var mailsetting = builder.Configuration.GetSection("MailSettings");
+builder.Services.Configure<MailSettings>(mailsetting);
+builder.Services.AddSingleton<IEmailSender, SendMailService>();
+
+
+
+//  Add Azure Email service configuration
+// builder.Services.AddSingleton(_ =>
+// {
+//     var connectionString = builder.Configuration.GetConnectionString("EmailConnectionString");
+//     if (string.IsNullOrEmpty(connectionString))
+//         throw new InvalidOperationException("Email connection string is not configured");
+//     return new EmailClient(connectionString);
+// });
 
 //builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 //builder.Services.AddTransient<PdfConverter>();
 
 
-builder.Services.AddScoped<IEmailSender, EmailSender>();
+//builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 // Adds the Identity system, including the default UI, and configures the user type as IdentityUser
-builder.Services.AddDefaultIdentity<ApplicationUser>(
-    options =>
-    {
-        options.SignIn.RequireConfirmedAccount = true; // Require email confirmation
-        options.Lockout.AllowedForNewUsers = true; 
-        options.Password.RequiredLength = 8;  // Độ dài tối thiểu
-        options.Password.RequireNonAlphanumeric = true; // Kí tự đặc biệt
-        options.Password.RequireDigit = true; // Số
-    }
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = true; // Require email confirmation
+            options.Lockout.AllowedForNewUsers = true;
+            options.Password.RequiredLength = 8; // Độ dài tối thiểu
+            options.Password.RequireNonAlphanumeric = true; // Kí tự đặc biệt
+            options.Password.RequireDigit = true; // Số
+        }
     )
     .AddEntityFrameworkStores<EduTechDbContext>(); // Configures Identity to store its data in EF Core
 
@@ -60,8 +63,10 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("IsAdminOrScheduler", policy =>
         policy.RequireClaim("UserType", UserTypes.Admin, UserTypes.Scheduler))
     .AddPolicy("CanManageClasses", policy => policy.RequireClaim("UserType", UserTypes.Admin, UserTypes.Scheduler))
-    .AddPolicy("CanViewStudentsLectures", policy => policy.RequireClaim("UserType", UserTypes.Admin, UserTypes.Scheduler))
-    .AddPolicy("CanManageStudentsLectures", policy => policy.RequireClaim("UserType", UserTypes.Admin, UserTypes.Scheduler))
+    .AddPolicy("CanViewStudentsLectures",
+        policy => policy.RequireClaim("UserType", UserTypes.Admin, UserTypes.Scheduler))
+    .AddPolicy("CanManageStudentsLectures",
+        policy => policy.RequireClaim("UserType", UserTypes.Admin, UserTypes.Scheduler))
     .AddPolicy("CanDeleteStudentsLectures", policy => policy.RequireClaim("UserType", UserTypes.Admin))
     .AddPolicy("CanManageCourses", policy => policy.RequireClaim("UserType", UserTypes.Admin, UserTypes.Scheduler));
 
@@ -76,6 +81,7 @@ using (var scope = app.Services.CreateScope())
     var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
     dbInitializer.Initialize();
 }
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -99,13 +105,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "dashboard",
-    pattern: "dashboard/{action=Index}",
-    defaults: new { controller = "Dashboard" });
+    "dashboard",
+    "dashboard/{action=Index}",
+    new { controller = "Dashboard" });
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    "default",
+    "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 app.Run();
