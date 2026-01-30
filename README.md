@@ -11,6 +11,12 @@ A comprehensive ASP.NET Core MVC application for managing educational institutio
 - [Setup Instructions](#setup-instructions)
   - [Prerequisites](#prerequisites)
   - [Installation Steps](#installation-steps)
+- [Business Modeling](#business-modeling)
+  - [Business Use Case Diagram](#business-use-case-diagram)
+  - [Activity Diagram](#activity-diagram)
+  - [System use Case Digram](#system-use-case-digram)
+  - [Class Diagrams](#class-diagrams)
+- [Database Design](#database-design)
 - [Database Schema](#database-schema)
 - [Class Diagrams](#class-diagrams)
 - [User Roles and Permissions](#user-roles-and-permissions)
@@ -19,11 +25,7 @@ A comprehensive ASP.NET Core MVC application for managing educational institutio
 - [Development Workflow](#development-workflow)
 - [MVC Routes](#mvc-routes)
 - [Business Rules](#business-rules)
-- [Security Considerations](#security-considerations)
 - [Testing](#testing)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
 
 ---
 
