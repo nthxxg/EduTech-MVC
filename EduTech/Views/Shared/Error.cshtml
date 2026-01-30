@@ -1,31 +1,31 @@
 ﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "Lỗi";
 }
 
 <div class="text-center mt-5">
-    <h1 class="text-danger">Error @Model.StatusCode</h1>
+    <h1 class="text-danger">Lỗi @Model.StatusCode</h1>
     <h2 class="text-danger">@Model.Message</h2>
 
     @if (Model.ShowRequestId)
     {
         <p>
-            <strong>Request ID:</strong> <code>@Model.RequestId</code>
+            <strong>Mã yêu cầu:</strong> <code>@Model.RequestId</code>
         </p>
     }
 
     @if (Model.StatusCode == 405)
     {
         <div class="alert alert-warning">
-            <p>The requested method is not allowed for this resource.</p>
-            <p>Please check if you're using the correct HTTP method (GET, POST, etc.)</p>
+            <p>Phương thức được yêu cầu không được phép cho tài nguyên này.</p>
+            <p>Vui lòng kiểm tra xem bạn đang sử dụng đúng phương thức HTTP (GET, POST, v.v.)</p>
         </div>
     }
 
     @if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
     {
         <div class="alert alert-info">
-            <p>This appears to be an AJAX request.</p>
+            <p>Đây có vẻ là một yêu cầu AJAX.</p>
         </div>
     }
 </div>

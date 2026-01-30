@@ -1,7 +1,7 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Thông tin các nhân";
+    ViewData["Title"] = "Thông tin cá nhân";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
@@ -18,14 +18,14 @@
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                         <div class="form-floating mb-3">
-                            <input asp-for="Input.Name" class="form-control" placeholder="Your Name" />
+                            <input asp-for="Input.Name" class="form-control" placeholder="Nhập họ và tên" />
                             <label asp-for="Input.Name" class="form-label">
                                 <i class="bi bi-person me-2"></i>Họ và tên
                             </label>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input asp-for="Username" class="form-control" placeholder="Your Username" disabled />
+                            <input asp-for="Username" class="form-control" placeholder="Tên đăng nhập" disabled />
                             <label asp-for="Username" class="form-label">
                                 <i class="bi bi-at me-2"></i>Username
                             </label>

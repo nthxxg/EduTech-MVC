@@ -142,7 +142,7 @@ namespace EduTech.Controllers
                 };
                 if (string.IsNullOrEmpty(model.Password))
                 {
-                    ModelState.AddModelError(string.Empty, "Password is required.");
+                    ModelState.AddModelError(string.Empty, "Mật khẩu là bắt buộc.");
                     return View(model);
                 }
                 var result = await _userManager.CreateAsync(user, model.Password);

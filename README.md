@@ -3,6 +3,7 @@
 A comprehensive ASP.NET Core MVC application for managing educational institutions, including course management, class scheduling, student enrollment, grading, and billing with role-based access control.
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Technology Stack](#technology-stack)
 - [Key Features](#key-features)
@@ -30,16 +31,16 @@ A comprehensive ASP.NET Core MVC application for managing educational institutio
 
 EduTech is a full-featured educational management system designed to streamline the operations of training centers and educational institutions. The system handles the complete lifecycle of classes from creation to completion, including:
 
-- Course and class management
-- Lecturer assignment and schedule conflict detection
-- Student enrollment and capacity management
-- Automated invoice generation and payment tracking
-- Grading and exam scheduling
-- Calendar visualization of schedules
-- Role-based dashboards for different user types
+- User management
+- Login, logout, change password
+- Manage courses, classes, students, instructors
+- Students register for courses, view class information, class schedule, exam schedule, course results, exam results.
+- Instructors view teaching schedules.
+- Transfer classes, merge classes.
+- Manage exam room assignments and exam schedules.
+- Instructors register to teach.
 
 ## Technology Stack
-
 
 - **Framework:** ASP.NET Core 9.0 MVC
 - **ORM:** Entity Framework Core 9.0
@@ -49,13 +50,12 @@ EduTech is a full-featured educational management system designed to streamline 
 - **Email Service:** MailKit/MimeKit (SMTP)
 - **UI Components:** Syncfusion EJ2 AspNet.Core Components
 
-
-
 ---
 
 ## Key Features
 
 ### Administrative Features
+
 - **Course Management**: Create, edit, and delete courses with descriptions
 - **Class Management**: Create classes with schedules, room assignments, and capacity limits
 - **User Management**: Manage students, lecturers, schedulers, and administrators
@@ -68,12 +68,14 @@ EduTech is a full-featured educational management system designed to streamline 
 - **Dashboard**: View system statistics (total classes, courses, lecturers, students)
 
 ### Scheduler Features
+
 - All administrative features (via policy-based authorization)
 - Manage class lifecycle transitions (Pending → Open → InProgress → PaymentPending → Archived)
 - Schedule exam dates and times
 - Process student payments and invoice management
 
 ### Lecturer Features
+
 - **Class Registration**: Register to teach available classes (Pending status)
 - **Schedule Management**: Automatic schedule conflict detection
 - **Teaching Dashboard**: View classes currently teaching with calendar visualization
@@ -82,6 +84,7 @@ EduTech is a full-featured educational management system designed to streamline 
 - **Cancel Teaching**: Option to cancel teaching assignments
 
 ### Student Features
+
 - **Browse Classes**: View available classes (Open status only)
 - **Enrollment**: Enroll in classes with automatic invoice generation
 - **Schedule Conflict Detection**: Prevents enrollment in overlapping classes
@@ -92,6 +95,7 @@ EduTech is a full-featured educational management system designed to streamline 
 - **Cancel Enrollment**: Withdraw from classes before they start
 
 ### System Features
+
 - **Schedule Conflict Detection**: Prevents double-booking for both lecturers and students
 - **Class Lifecycle Management**: Structured workflow from creation to archival
 - **Capacity Management**: Automatic tracking of enrolled students vs. capacity
@@ -105,6 +109,7 @@ EduTech is a full-featured educational management system designed to streamline 
 ## System Architecture
 
 ### MVC Architecture
+
 EduTech follows the Model-View-Controller pattern with server-side rendering:
 
 - **Models**: Entity classes representing database tables and view models for UI
@@ -112,27 +117,28 @@ EduTech follows the Model-View-Controller pattern with server-side rendering:
 - **Controllers**: Handle HTTP requests and coordinate between models and views
 
 ### Authentication & Authorization
+
 - **Claim-based authentication** using ASP.NET Core Identity
 - **Policy-based authorization** with custom policies for each user type
 - **Email confirmation** required for account activation
 - **Password requirements**: Minimum 8 characters, must include digits and special characters
 
 ### Email Service
+
 - **SMTP-based email** using MailKit and MimeKit libraries
 - **Configurable mail settings** via `appsettings.Development.json`
 - **Fallback mechanism**: Failed emails are saved to `mailssave/` directory as .eml files
 - **Logging**: Comprehensive logging for email operations
-
 
 ---
 
 ## Setup Instructions
 
 ### Prerequisites
-- **.NET 9.0 SDK** or later
-- **SQL Server** (LocalDB, Express, or Full Edition)
-- **Visual Studio 2022** or **VS Code** with C# extension
-- **SMTP Server** access (Gmail, Outlook, or custom SMTP server)
+
+- **.NET 9.0 SDK**
+- **SQL Server**
+- **Visual Studio 2022** or **VS Code** with C# extension, Rider
 - **Syncfusion License** (Community or Commercial)
 
 ### Installation Steps
@@ -148,6 +154,7 @@ mcr.microsoft.com/mssql/server:2022-latest
 ```
 
 **Connect to SQL Server** using your preferred tool (SSMS, DBeaver, etc.):
+
 - **Server**: `localhost`
 - **Username**: `sa`
 - **Password**: `SQLServer123@`
@@ -193,15 +200,6 @@ Add your SMTP settings to `appsettings.Development.json`:
 }
 ```
 
-**For Gmail:**
-- Use an App Password (not your regular password)
-- Enable 2-factor authentication
-- Generate App Password at: https://myaccount.google.com/apppasswords
-
-**For Outlook/Office 365:**
-- Host: smtp.office365.com
-- Port: 587
-
 **Fallback Behavior:**
 If email sending fails, the system automatically saves emails to the `mailssave/` directory as .eml files for later review or retry.
 
@@ -237,10 +235,12 @@ dotnet run
 ```
 
 Or use Visual Studio:
+
 - Open `EduTech.sln`
 - Press `F5` to run
 
 The application will be available at:
+
 - **HTTPS**: https://localhost:7077
 - **HTTP**: http://localhost:5217
 
@@ -251,18 +251,20 @@ After the first run, the database is seeded with default accounts (see [Default 
 ### Troubleshooting
 
 **Issue:** Database connection errors
+
 - Ensure Docker is running before starting SQL Server container
 - Check connection string is correct
 - Verify SQL Server is accessible on port 1433
 
-
 **Issue:** Email sending fails
+
 - Verify SMTP credentials are correct
 - Check SMTP host and port settings
 - For Gmail, ensure App Password is used (not regular password)
 - Check `mailssave/` folder for saved emails if sending fails
 
 **Issue:** Syncfusion license error
+
 - Obtain a valid license key (Community or Commercial)
 - Update the license key in `Program.cs`
 
@@ -288,6 +290,7 @@ Course (1) ──── (Many) Class (Many) ──── (Many) Lecturer
 ### Core Entities
 
 #### ApplicationUser (Extends IdentityUser)
+
 - Identity: `Id`, `Email`, `UserName`, `PasswordHash`
 - Custom: `Name`, `UserType` (claim)
 - Relationships:
@@ -295,10 +298,12 @@ Course (1) ──── (Many) Class (Many) ──── (Many) Lecturer
   - Many-to-Many with `Class` (as Student)
 
 #### Course
+
 - `Id` (PK), `Name`, `Description`
 - Relationship: One-to-Many with `Class`
 
 #### Class
+
 - `Id` (PK), `Name`, `RoomNumber`, `StartDate`, `EndDate`
 - `Capacity`, `NumberOfStudents`, `Tuition`
 - `Status` (Enum: Pending, Open, InProgress, PaymentPending, Archived)
@@ -309,315 +314,74 @@ Course (1) ──── (Many) Class (Many) ──── (Many) Lecturer
   - Many-to-Many with `ApplicationUser` (Lecturers and Students)
 
 #### ClassSchedule
+
 - `Id` (PK), `Day` (DayOfWeek), `StartTime`, `EndTime`
 - `ClassId` (FK) → `Class`
 
 #### StudentGrade
+
 - `Id` (PK), `Score`, `Comments`
 - `AssignmentType` (Enum: Practice, Theory)
 - `ClassId` (FK) → `Class`
 - `StudentId` (FK) → `ApplicationUser`
 
 #### ExamSchedule
+
 - `Id` (PK), `RoomNumber`, `ExamDate`, `StartTime`, `EndTime`
 - `AssignmentType` (Enum: Practice, Theory)
 - `ClassId` (FK) → `Class`
 
 #### Invoice
+
 - `Id` (PK), `Amount`, `CreatedDate`, `UpdatedDate`
 - `Status` (Enum: Unpaid, Paid)
 - `ClassId` (FK) → `Class`
 - `StudentId` (FK) → `ApplicationUser`
 
----
+## Business Modeling
 
-## Class Diagrams
+### Business Use Case Diagram
 
-### 1. User Management Domain
+<div align="center">
 
-```mermaid
-classDiagram
-    class ApplicationUser {
-        +string Id
-        +string Name
-        +string Email
-        +string UserName
-        +string PasswordHash
-        +string UserType
-        +List~Class~ ClassesTeaching
-        +List~Class~ ClassesAttending
-    }
+![Business Use Case Diagram](docs/images/business-use-case.drawio.png)
 
-    class UserTypes {
-        <<static>>
-        +string Admin
-        +string Scheduler
-        +string Lecturer
-        +string Student
-    }
+</div>
 
-    ApplicationUser --> UserTypes : uses
+### Activity Diagram
 
-    note for ApplicationUser "Extends IdentityUser\nUserType stored as claim"
-```
+<div align="center">
 
-### 2. Course and Class Management Domain
+![System Use Case Diagram](docs/images/activity-diagram.png)
 
-```mermaid
-classDiagram
-    class Course {
-        +int Id
-        +string Name
-        +string Description
-        +List~Class~ Classes
-    }
+</div>
 
-    class Class {
-        +int Id
-        +string Name
-        +string RoomNumber
-        +DateOnly StartDate
-        +DateOnly EndDate
-        +int Capacity
-        +int NumberOfStudents
-        +double Tuition
-        +ClassStatus Status
-        +int CourseId
-        +Course Course
-        +List~ClassSchedule~ ClassSchedules
-        +List~ApplicationUser~ Lecturers
-        +List~ApplicationUser~ Students
-        +List~ExamSchedule~ ExamSchedules
-        +List~StudentGrade~ StudentGrades
-        +List~Invoice~ Invoices
-    }
+### System use Case Digram
 
-    class ClassSchedule {
-        +int Id
-        +DayOfWeek Day
-        +TimeOnly StartTime
-        +TimeOnly EndTime
-        +int ClassId
-        +Class Class
-    }
+<div align="center">
 
-    class ClassStatus {
-        <<enumeration>>
-        Pending
-        Open
-        InProgress
-        PaymentPending
-        Archived
-    }
+![System Use Case Diagram](docs/images/system-use-case.drawio.png)
 
-    Course "1" --> "*" Class : contains
-    Class "1" --> "*" ClassSchedule : has
-    Class --> ClassStatus : status
-```
+</div>
 
-### 3. Enrollment and Teaching Domain
+### Class Diagrams
 
-```mermaid
-classDiagram
-    class Class {
-        +int Id
-        +string Name
-        +int Capacity
-        +int NumberOfStudents
-        +ClassStatus Status
-        +List~ApplicationUser~ Lecturers
-        +List~ApplicationUser~ Students
-    }
+<div align="center">
 
-    class ApplicationUser {
-        +string Id
-        +string Name
-        +string Email
-        +List~Class~ ClassesTeaching
-        +List~Class~ ClassesAttending
-    }
+![System Use Case Diagram](docs/images/class-diagram.drawio.png)
 
-    Class "*" --> "*" ApplicationUser : taught by
-    Class "*" --> "*" ApplicationUser : attended by
+</div>
 
-    note for Class "Many-to-Many relationships\nvia ClassLecturers and\nClassStudents join tables"
-```
+## Database Design
 
-### 4. Grading and Exam Domain
-
-```mermaid
-classDiagram
-    class Class {
-        +int Id
-        +string Name
-        +List~StudentGrade~ StudentGrades
-        +List~ExamSchedule~ ExamSchedules
-    }
-
-    class StudentGrade {
-        +int Id
-        +int ClassId
-        +string StudentId
-        +AssignmentType AssignmentType
-        +double Score
-        +string Comments
-        +Class Class
-        +ApplicationUser Student
-    }
-
-    class ExamSchedule {
-        +int Id
-        +int ClassId
-        +string RoomNumber
-        +AssignmentType AssignmentType
-        +DateOnly ExamDate
-        +TimeOnly StartTime
-        +TimeOnly EndTime
-        +Class Class
-    }
-
-    class AssignmentType {
-        <<enumeration>>
-        Practice
-        Theory
-    }
-
-    class ApplicationUser {
-        +string Id
-        +string Name
-    }
-
-    Class "1" --> "*" StudentGrade : contains
-    Class "1" --> "*" ExamSchedule : has
-    StudentGrade "*" --> "1" ApplicationUser : graded
-    StudentGrade --> AssignmentType : type
-    ExamSchedule --> AssignmentType : type
-```
-
-### 5. Invoice and Payment Domain
-
-```mermaid
-classDiagram
-    class Invoice {
-        +int Id
-        +int ClassId
-        +string StudentId
-        +double Amount
-        +InvoiceStatus Status
-        +DateTime CreatedDate
-        +DateTime UpdatedDate
-        +Class Class
-        +ApplicationUser Student
-    }
-
-    class InvoiceStatus {
-        <<enumeration>>
-        Unpaid
-        Paid
-    }
-
-    class Class {
-        +int Id
-        +string Name
-        +double Tuition
-        +List~Invoice~ Invoices
-    }
-
-    class ApplicationUser {
-        +string Id
-        +string Name
-        +string Email
-    }
-
-    Invoice "*" --> "1" Class : for
-    Invoice "*" --> "1" ApplicationUser : belongs to
-    Invoice --> InvoiceStatus : status
-
-    note for Invoice "Created automatically\nwhen student enrolls\nAmount copied from\nClass.Tuition"
-```
-
-### 6. Authorization Domain
-
-```mermaid
-classDiagram
-    class AuthorizationPolicy {
-        <<abstract>>
-        +string Name
-        +List~string~ RequiredClaims
-    }
-
-    class IsAdminPolicy {
-        +Claim UserType = "Admin"
-    }
-
-    class IsSchedulerPolicy {
-        +Claim UserType = "Scheduler"
-    }
-
-    class IsLecturerPolicy {
-        +Claim UserType = "Lecturer"
-    }
-
-    class IsStudentPolicy {
-        +Claim UserType = "Student"
-    }
-
-    class IsAdminOrSchedulerPolicy {
-        +Claim UserType = "Admin" | "Scheduler"
-    }
-
-    class CanManageClassesPolicy {
-        +Claim UserType = "Admin" | "Scheduler"
-    }
-
-    class CanDeleteStudentsLecturesPolicy {
-        +Claim UserType = "Admin"
-    }
-
-    AuthorizationPolicy <|-- IsAdminPolicy
-    AuthorizationPolicy <|-- IsSchedulerPolicy
-    AuthorizationPolicy <|-- IsLecturerPolicy
-    AuthorizationPolicy <|-- IsStudentPolicy
-    AuthorizationPolicy <|-- IsAdminOrSchedulerPolicy
-    AuthorizationPolicy <|-- CanManageClassesPolicy
-    AuthorizationPolicy <|-- CanDeleteStudentsLecturesPolicy
-```
-
-### 7. Email Service Architecture
-
-```mermaid
-classDiagram
-    class SendMailService {
-        -MailSettings mailSettings
-        -ILogger~SendMailService~ logger
-        +SendEmailAsync(email, subject, htmlMessage)
-    }
-
-    class MailSettings {
-        +string Mail
-        +string DisplayName
-        +string Password
-        +string Host
-        +int Port
-    }
-
-    class IEmailSender {
-        <<interface>>
-        +SendEmailAsync(email, subject, htmlMessage)
-    }
-
-    SendMailService ..|> IEmailSender
-    SendMailService --> MailSettings : uses
-
-    note for SendMailService "Uses MailKit/MimeKit\nFalls back to file storage\nSaves failed emails to\nmailssave/ directory"
-```
-
----
+![Entity Relationship Diagram](docs/images/EduTech-ERD.png)
 
 ## User Roles and Permissions
 
 ### Admin
+
 **Full system access** with capabilities to:
+
 - Manage courses (create, edit, delete)
 - Manage classes (create, edit, delete, merge, switch students)
 - Manage users (create, edit, delete students, lecturers, schedulers)
@@ -627,7 +391,9 @@ classDiagram
 - **Exclusive permissions**: Delete users, delete classes
 
 ### Scheduler
+
 **Operational management** access to:
+
 - All Admin capabilities EXCEPT delete operations
 - Manage courses (create, edit)
 - Manage classes (create, edit, merge, switch students)
@@ -637,7 +403,9 @@ classDiagram
 - View admin dashboard
 
 ### Lecturer
+
 **Teaching-focused** access to:
+
 - Register to teach available classes (Pending status)
 - View classes currently teaching with calendar
 - View teaching history (all classes taught)
@@ -646,7 +414,9 @@ classDiagram
 - **Restrictions**: Cannot create/edit classes or manage users
 
 ### Student
+
 **Learning-focused** access to:
+
 - Browse available classes (Open status only)
 - Enroll in classes (with schedule conflict detection)
 - View enrolled classes with calendar
@@ -658,18 +428,18 @@ classDiagram
 
 ### Authorization Policies
 
-| Policy | Required Claim |
-|--------|---------------|
-| IsAdmin | UserType = "Admin" |
-| IsScheduler | UserType = "Scheduler" |
-| IsLecturer | UserType = "Lecturer" |
-| IsStudent | UserType = "Student" |
-| IsAdminOrScheduler | UserType = "Admin" OR "Scheduler" |
-| CanManageClasses | UserType = "Admin" OR "Scheduler" |
-| CanViewStudentsLectures | UserType = "Admin" OR "Scheduler" |
+| Policy                    | Required Claim                    |
+| ------------------------- | --------------------------------- |
+| IsAdmin                   | UserType = "Admin"                |
+| IsScheduler               | UserType = "Scheduler"            |
+| IsLecturer                | UserType = "Lecturer"             |
+| IsStudent                 | UserType = "Student"              |
+| IsAdminOrScheduler        | UserType = "Admin" OR "Scheduler" |
+| CanManageClasses          | UserType = "Admin" OR "Scheduler" |
+| CanViewStudentsLectures   | UserType = "Admin" OR "Scheduler" |
 | CanManageStudentsLectures | UserType = "Admin" OR "Scheduler" |
-| CanDeleteStudentsLectures | UserType = "Admin" |
-| CanManageCourses | UserType = "Admin" OR "Scheduler" |
+| CanDeleteStudentsLectures | UserType = "Admin"                |
+| CanManageCourses          | UserType = "Admin" OR "Scheduler" |
 
 ---
 
@@ -677,12 +447,11 @@ classDiagram
 
 After the first application run, the following accounts are seeded:
 
-| Role | Email | Password | Description |
-|------|-------|----------|-------------|
-| **Admin** | admin@edutech.com | Demo123@ | Full system administrator access |
-| **Scheduler** | giaovu@edutech.com | Demo123@ | Operational management access |
-| **Lecturer** | giangvien@edutech.com | Demo123@ | Teaching and grading access |
-
+| Role          | Email                 | Password | Description                      |
+| ------------- | --------------------- | -------- | -------------------------------- |
+| **Admin**     | admin@edutech.com     | Demo123@ | Full system administrator access |
+| **Scheduler** | giaovu@edutech.com    | Demo123@ | Operational management access    |
+| **Lecturer**  | giangvien@edutech.com | Demo123@ | Teaching and grading access      |
 
 ---
 
@@ -770,7 +539,7 @@ EduTech-MVC/
 │   ├── Program.cs                    # Application entry point
 │   ├── EduTechDbContext.cs           # Database context
 │   └── EduTech.csproj                # Project file
-└── README.md                         
+└── README.md
 ```
 
 ---
@@ -778,6 +547,7 @@ EduTech-MVC/
 ## Development Workflow
 
 ### Adding a New Feature
+
 1. Create/update entity models in `Models/`
 2. Add migration: `dotnet ef migrations add YourMigrationName`
 3. Create controller in `Controllers/`
@@ -786,12 +556,12 @@ EduTech-MVC/
 6. Add authorization policies in `Program.cs` if needed
 7. Apply migration: `dotnet ef database update`
 
-
 ---
 
 ## MVC Routes
 
 ### Course Management
+
 - `GET /Course/Index` - List all courses
 - `GET /Course/Add` - Add course form
 - `POST /Course/Add` - Create course
@@ -800,6 +570,7 @@ EduTech-MVC/
 - `POST /Course/Delete/{id}` - Delete course
 
 ### Class Management
+
 - `GET /Class/Index` - List classes (role-filtered)
 - `GET /Class/Add` - Add class form
 - `POST /Class/Add` - Create class
@@ -822,6 +593,7 @@ EduTech-MVC/
 - `GET /Class/InvoiceDetails/{id}` - View invoice details
 
 ### Student Management
+
 - `GET /Student/Index` - List all students
 - `GET /Student/Add` - Add student form
 - `POST /Student/Add` - Create student
@@ -836,6 +608,7 @@ EduTech-MVC/
 - `GET /Student/InvoiceDetails/{id}` - View invoice detail
 
 ### Lecturer Management
+
 - `GET /Lecturer/Index` - List all lecturers
 - `GET /Lecturer/Add` - Add lecturer form
 - `POST /Lecturer/Add` - Create lecturer
@@ -849,6 +622,7 @@ EduTech-MVC/
 - `POST /Lecturer/Grade` - Submit grades
 
 ### Exam Management
+
 - `GET /Exam/CurrentExamSchedule` - List in-progress classes
 - `GET /Exam/Create/{classId}` - Create exam form
 - `POST /Exam/Create` - Create exam schedule
@@ -858,6 +632,7 @@ EduTech-MVC/
 - `GET /Exam/ExamResults` - View exam results (public)
 
 ### Dashboard
+
 - `GET /Dashboard/Index` - Route to role-based dashboard
 - `GET /Dashboard/AdminDashboard` - Admin statistics
 - `GET /Dashboard/LecturerDashboard` - Lecturer dashboard
@@ -868,6 +643,7 @@ EduTech-MVC/
 ## Business Rules
 
 ### Class Lifecycle
+
 1. **Pending**: Class created, waiting for lecturer assignment
 2. **Open**: Lecturer assigned, accepting student enrollment
 3. **InProgress**: Class started, no more enrollments
@@ -875,29 +651,34 @@ EduTech-MVC/
 5. **Archived**: Class completed and payment processed
 
 ### Schedule Conflict Detection
+
 - Lecturers cannot teach two classes with overlapping schedules
 - Students cannot enroll in two classes with overlapping schedules
 - Conflicts checked based on date ranges (StartDate, EndDate) and weekly schedules (Day, StartTime, EndTime)
 
 ### Capacity Management
+
 - Classes have maximum capacity
 - Enrollment prevented when class is full
 - Merging classes validates combined capacity
 - Current student count tracked automatically
 
 ### Invoice Generation
+
 - Invoices created automatically when student enrolls
 - Amount copied from class tuition
 - Initial status: Unpaid
 - Cannot be deleted, only marked as Paid
 
 ### Grading Rules
+
 - Two assignment types per class: Practice and Theory
 - Lecturers can grade only students in their classes
 - Grades visible to students after entry
 - One exam allowed per assignment type per class
 
 ### Email Delivery
+
 - Emails sent via SMTP using MailKit
 - Failed emails saved to `mailssave/` directory as .eml files
 - Comprehensive logging for email operations
@@ -905,11 +686,10 @@ EduTech-MVC/
 
 ---
 
-
-
 ## Testing
 
 ### Manual Testing Workflow
+
 1. Login as Admin (admin@edutech.com / Demo123@)
 2. Create a new Course
 3. Create a new Class for that Course (status: Pending)
@@ -929,12 +709,3 @@ EduTech-MVC/
 17. Admin changes class status to Archived
 
 ---
-
-
-
-
-
-
-
-
-
